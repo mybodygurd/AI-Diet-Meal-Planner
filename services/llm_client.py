@@ -3,12 +3,15 @@ load_dotenv()
 import os
 from groq import AsyncGroq
 from typing import Dict, Any
+from logger import get_logger
 
+logger = get_logger(__name__)
 
 class LLMClient:
     def __init__(self):
         self.api_key = os.getenv("LLM_API_KEY")
         if not self.api_key:
+            logger.error("API key not found")
             raise ValueError("LLM_API_KEY not found in environment variables")
         self.model = "llama3-8b-8192"
         self.client = AsyncGroq(api_key=self.api_key)
@@ -28,4 +31,5 @@ class LLMClient:
             )
             return response.choices[0].message.content
         except Exception as e:
+            logger.error(f"Calling llm model failed: {str(e)}")
             raise Exception(f"LLM call failed: {str(e)}")
