@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from models import InventoryResponse, DietResponse, InventoryInput, DietInput
+from models import InventoryResponse, DietResponse, InventoryInput, DietInput, AskInput, AskResponse
 from agents.inventory_agent import InventoryAgent
 from agents.diet_agent import DietAgent
+from agents.manager_agent import AgentManager
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -34,4 +35,14 @@ async def filter_diet(input: DietInput):
         return response
     except Exception as e:
         logger.error(f"Error processing diet: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post('/ask', response_model=AskResponse)
+async def manage_agents(input: AskInput):
+    try:
+        agent = AgentManager()
+        response = await agent.run(input.items, input.diet)
+        return response
+    except Exception as e:
+        logger.error(f"Error managing agents: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

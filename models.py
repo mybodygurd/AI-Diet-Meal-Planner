@@ -14,3 +14,12 @@ class InventoryInput(BaseModel):
 class DietInput(BaseModel):
     items: List[str]
     diet: str
+    
+class AskInput(BaseModel):
+    items: List[str]
+    diet: str
+    
+class AskResponse(BaseModel):
+    usable_items: List[str]
+    diet_filtered: List[str]
+    suggestions: list[str]
